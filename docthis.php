@@ -29,18 +29,22 @@ add_action( 'admin_menu', 'meu_menu' );
 
 function meu_menu() {
     add_menu_page(
-        //titulo na aba
-        'docthis',
-        //titulo no menu lateral
-        'Documentos',
-        //localização do plugin
-        'manage_options',
-        //titulo no final do link
-        'doc-this',
-        //página onde se encontra o conteudo
-        'wporg_options_page_html',
-        plugin_dir_url(__FILE__) . 'images/icon.png',
-        20
+        'docthis',                      //titulo na aba
+        'Documentos',                   //titulo no menu lateral
+        'manage_options',               //localização do plugin
+        'doc-this',                     //titulo no final do link
+        'page_html',                    //página onde se encontra o conteudo
+        plugin_dir_url(__FILE__) . "/admin/image/icon.svg",
+        1                               //ordem do menu na barra lateral
     );
+}
+
+function page_html() {
+	if ( !current_user_can( 'manage_options' ) )  {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+	echo '<div class="wrap">';
+	echo '<p>Aqui sera exibida a sua documentacao.</p>';
+	echo '</div>';
 }
 

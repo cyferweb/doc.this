@@ -23,6 +23,8 @@
  */
 
 
+//nao permite o acesso direto
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 
 add_action( 'admin_menu', 'meu_menu' );
@@ -39,12 +41,38 @@ function meu_menu() {
     );
 }
 
-function page_html() {
+function page_admin() {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
-	echo '<div class="wrap">';
-	echo '<p>Aqui sera exibida a sua documentacao.</p>';
-	echo '</div>';
 }
+
+function page_html() {
+    $data = trim(get_option('meu_conteudo'));
+    if (isset($_POST['docthis_salvar'])) {
+        $note = wp_kses_post(stripslashes($_POST['meu_conteudo']));
+
+    if (get_option('meu_conteudo') !== false) {
+        update_option('meu_conteudo', $note);
+    
+    }else {
+        add_option('meu_conteudo', $note);
+    }
+    
+    echo '<meta http-equiv="refresh" content="0">';
+
+    }else {
+	
+	echo '<div class="wrap oi">';
+	echo '<h1>Salve a vida do próximo programador, documente isso.</h1>';
+	echo '</div>';
+    echo '<form method="post" action="'.admin_url('admin.php?page=doc-this').'">';
+	echo '<div class="textarea-wrap" id="docthis">';
+	echo wp_editor($data,'meu_conteudo',$settings = array('teeny' => true, 'media_buttons' => false));
+	echo '</div>';
+    echo '<p style="margin-bottom:0;"><input type="submit" id="save" value="Salvar documento" class="button-primary"></p>';
+	echo '<input type="hidden" name="docthis_salvar" id="docthis_salvar" value="true"></form>';
+}
+}
+
 
